@@ -6,8 +6,8 @@ import { Forms } from "./data/forms";
 const page = () => {
   const [page, setPage] = useState(1);
   return (
-    <div>
-      <FormBuilder title="test" setPage={setPage} page={Forms[page]} />
+    <div className="h-screen">
+      <FormBuilder count={page} setPage={setPage} page={Forms[page]} />
     </div>
   );
 };

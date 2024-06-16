@@ -4,11 +4,16 @@ import Image from "next/image";
 
 export const FormBuilder: React.FC<FormBuilderProps> = ({
   page,
-  title,
   setPage,
+  count,
 }) => {
   const updateCount = () => {
     setPage((prev) => prev + 1);
+  };
+  const decrementCount = () => {
+    if (count != 1) {
+      setPage((prev) => prev - 1);
+    }
   };
 
   const inputConstructer = (field: FormField) => {
@@ -44,7 +49,10 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
             <select name={field.field} id={field.field}>
               {field.options?.map((option, index) => {
                 if (typeof option === "string") {
-                  placeholder = option.replace("_", " ");
+                  placeholder =
+                    typeof option === "string"
+                      ? option.replace(/_/g, " ")
+                      : option;
                   return (
                     <option key={index} className="uppercase" value={option}>
                       {placeholder}
@@ -81,22 +89,39 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   return (
-    <div>
-      <h1>{title}</h1>
+    <div className="flex flex-col items-center justify-center bg-red-200 h-full">
+      <h1>{page.title}</h1>
       {page.fields.map((field) => inputConstructer(field))}
-      {!page.is_last ? (
-        <button onClick={() => updateCount()} className="flex items-center">
-          <p className="uppercase">Next</p>
-          <Image
-            src={"/assets/right-arrow.png"}
-            alt=""
-            width={10}
-            height={10}
-          />
-        </button>
-      ) : (
-        <button>Submit</button>
-      )}
+      <div className="flex space-x-3">
+        {!(count == 1) && (
+          <button
+            className="flex items-center"
+            onClick={() => decrementCount()}
+          >
+            <Image
+              src={"/assets/right-arrow.png"}
+              alt=""
+              className="-scale-x-100"
+              width={40}
+              height={40}
+            />
+            <p className="uppercase">Back</p>
+          </button>
+        )}
+        {!page.is_last ? (
+          <button onClick={() => updateCount()} className="flex items-center">
+            <p className="uppercase">Next</p>
+            <Image
+              src={"/assets/right-arrow.png"}
+              alt=""
+              width={40}
+              height={40}
+            />
+          </button>
+        ) : (
+          <button className="uppercase">Submit</button>
+        )}
+      </div>
     </div>
   );
 };

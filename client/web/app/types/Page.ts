@@ -7,6 +7,7 @@ type FormField = {
 type FormPage = {
   fields: FormField[];
   is_last: boolean;
+  title: string;
 };
 
 type FormsType = {
@@ -14,7 +15,7 @@ type FormsType = {
 };
 
 type FormBuilderProps = {
+  count: number;
   page: FormPage;
-  title: string;
   setPage: React.Dispatch<React.SetStateAction<number>>;
 };

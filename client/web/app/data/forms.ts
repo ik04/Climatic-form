@@ -1,5 +1,6 @@
 export const Forms: FormsType = {
   1: {
+    title: "Applicants Details",
     fields: [
       {
         field: "name",
@@ -33,6 +34,7 @@ export const Forms: FormsType = {
     is_last: false,
   },
   2: {
+    title: "Project Details",
     fields: [
       {
         field: "project_type",
@@ -74,6 +76,7 @@ export const Forms: FormsType = {
     is_last: false,
   },
   3: {
+    title: "Documents Upload",
     fields: [
       {
         field: "pancard_copy",
@@ -100,14 +103,19 @@ export const Forms: FormsType = {
   },
 
   4: {
+    title: "Reference Details",
     fields: [
       {
         field: "reference_1",
         type: "title",
       },
       {
+        field: "name",
+        type: "text",
+      },
+      {
         field: "phone",
-        type: "numbers",
+        type: "number",
       },
       {
         field: "address",
@@ -121,14 +129,20 @@ export const Forms: FormsType = {
     is_last: false,
   },
   5: {
+    title: "Reference Details",
+
     fields: [
       {
         field: "reference_2",
         type: "title",
       },
       {
+        field: "name",
+        type: "text",
+      },
+      {
         field: "phone",
-        type: "numbers",
+        type: "number",
       },
       {
         field: "address",
