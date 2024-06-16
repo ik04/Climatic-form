@@ -113,9 +113,39 @@
         {
           "field": "phone",
           "type": "numbers"
+        },
+        {
+          "field": "address",
+          "type": "text"
+        },
+        {
+          "field": "pincode",
+          "type": "number"
         }
       ],
       "is_last": false
+    },
+    {
+      "page": 5,
+      "fields": [
+        {
+          "field": "reference_2",
+          "type": "title"
+        },
+        {
+          "field": "phone",
+          "type": "numbers"
+        },
+        {
+          "field": "address",
+          "type": "text"
+        },
+        {
+          "field": "pincode",
+          "type": "number"
+        }
+      ],
+      "is_last": true
     }
   ]
 }
