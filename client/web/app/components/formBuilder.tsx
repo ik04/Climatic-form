@@ -19,33 +19,73 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
   const inputConstructer = (field: FormField) => {
     switch (field.type) {
       case "title":
-        return <h1>{field.field}</h1>;
+        let title;
+        title =
+          typeof field.field === "string"
+            ? field.field.replace(/_/g, " ")
+            : field.field;
+        return <h1 className="text-2xl uppercase text-inputGrey">{title}</h1>;
+
       case "text":
+        let text;
+        text =
+          typeof field.field === "string"
+            ? field.field.replace(/_/g, " ")
+            : field.field;
         return (
-          <>
-            <label htmlFor={field.field}>{field.field}</label>
+          <div className="flex flex-col items-start">
+            <label
+              className="text-2xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {text}
+            </label>
             <input type="text" name={field.field} id={field.field} />
-          </>
+          </div>
         );
       case "email":
         return (
-          <>
-            <label htmlFor={field.field}>{field.field}</label>
+          <div className="flex flex-col items-start">
+            <label
+              className="text-2xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {field.field}
+            </label>
             <input type="email" name={field.field} id={field.field} />
-          </>
+          </div>
         );
       case "number":
+        let number;
+        number =
+          typeof field.field === "string"
+            ? field.field.replace(/_/g, " ")
+            : field.field;
         return (
-          <>
-            <label htmlFor={field.field}>{field.field}</label>
+          <div className="flex flex-col items-start">
+            <label
+              className="text-2xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {number}
+            </label>
             <input type="number" name={field.field} id={field.field} />
-          </>
+          </div>
         );
       case "select":
-        let placeholder;
+        let placeholder, selectLabel;
+        selectLabel =
+          typeof field.field === "string"
+            ? field.field.replace(/_/g, " ")
+            : field.field;
         return (
-          <>
-            <label htmlFor={field.field}>{field.field}</label>
+          <div className="flex flex-col items-start">
+            <label
+              className="text-2xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {selectLabel}
+            </label>
             <select name={field.field} id={field.field}>
               {field.options?.map((option, index) => {
                 if (typeof option === "string") {
@@ -54,7 +94,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                       ? option.replace(/_/g, " ")
                       : option;
                   return (
-                    <option key={index} className="uppercase" value={option}>
+                    <option key={index} className="" value={option}>
                       {placeholder}
                     </option>
                   );
@@ -67,14 +107,29 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                 }
               })}
             </select>
-          </>
+          </div>
         );
       case "file":
+        let file;
+        file =
+          typeof field.field === "string"
+            ? field.field.replace(/_/g, " ")
+            : field.field;
         return (
-          <>
-            <label htmlFor={field.field}>{field.field}</label>
-            <input type="file" name={field.field} id={field.field} />
-          </>
+          <div className="flex flex-col items-start">
+            <label
+              className="text-2xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {file}
+            </label>
+            <input
+              type="file"
+              className="border-none rounded-none"
+              name={field.field}
+              id={field.field}
+            />
+          </div>
         );
       case "camera":
         return (
@@ -89,37 +144,46 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-red-200 h-full">
-      <h1>{page.title}</h1>
+    <div className="flex flex-col items-center justify-around h-full">
+      <h1 className="md:text-[40px] font-jost text-inputGrey">{page.title}</h1>
       {page.fields.map((field) => inputConstructer(field))}
-      <div className="flex space-x-3">
+      <div className="flex space-x-10">
         {!(count == 1) && (
           <button
-            className="flex items-center"
+            className="flex items-center space-x-2"
             onClick={() => decrementCount()}
           >
             <Image
               src={"/assets/right-arrow.png"}
               alt=""
               className="-scale-x-100"
-              width={40}
-              height={40}
+              width={80}
+              height={80}
             />
-            <p className="uppercase">Back</p>
+            <p className="uppercase text-[40px] font-jost text-accentGreen">
+              Back
+            </p>
           </button>
         )}
         {!page.is_last ? (
-          <button onClick={() => updateCount()} className="flex items-center">
-            <p className="uppercase">Next</p>
+          <button
+            onClick={() => updateCount()}
+            className="flex items-center justify-center space-x-3"
+          >
+            <p className="uppercase text-[40px] font-jost text-accentGreen">
+              Next
+            </p>
             <Image
               src={"/assets/right-arrow.png"}
               alt=""
-              width={40}
-              height={40}
+              width={80}
+              height={80}
             />
           </button>
         ) : (
-          <button className="uppercase">Submit</button>
+          <button className="uppercase text-[40px] font-jost text-black bg-accentGreen p-2">
+            Submit
+          </button>
         )}
       </div>
     </div>

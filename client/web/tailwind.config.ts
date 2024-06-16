@@ -12,6 +12,12 @@ const config: Config = {
       jost: ["Jost", "sans"],
     },
     extend: {
+      colors: {
+        inputGrey: "#7A7A7A",
+        lightGreen: "#DEE9DC",
+        accentGreen: "#81D742",
+        submitGreen: "#4CAF50",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
