@@ -19,3 +19,7 @@ type FormBuilderProps = {
   page: FormPage;
   setPage: React.Dispatch<React.SetStateAction<number>>;
 };
+
+interface FormDataState {
+  [key: number]: { [key: string]: any };
+}

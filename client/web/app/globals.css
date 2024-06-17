@@ -5,19 +5,14 @@
 @tailwind utilities;
 
 input {
-  width: 600px;
-  height: 50px;
   border: 1px #cccccc solid;
   border-radius: 10px;
   -webkit-appearance: none;
   -moz-appearance: textfield;
 }
 select {
-  border-radius: 10px;
   background-color: white;
   border: 1px #cccccc solid;
-  width: 600px;
-  height: 50px;
   padding: 10px;
 }
 label {

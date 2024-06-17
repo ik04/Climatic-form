@@ -1,195 +1,181 @@
-"use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect, ChangeEvent } from "react";
 import Image from "next/image";
+import { page1, page2, page3, page4, page5 } from "../validation/Pages";
+
+interface FormDataState {
+  [key: number]: { [key: string]: any };
+}
 
 export const FormBuilder: React.FC<FormBuilderProps> = ({
   page,
   setPage,
   count,
 }) => {
-  const [data, setData] = useState<any>([]);
-  const updateCount = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const [formData, setFormData] = useState<FormDataState>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    // Initialize formData for the current page if not already initialized
+    if (!formData[count]) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [count]: {},
+      }));
+    }
+  }, [count, formData]);
+
+  const convertFormData = (formData: FormData) => {
     const formObject: { [key: string]: any } = {};
     formData.forEach((value, key) => {
-      formObject[key] = value;
+      const field = page.fields.find((field) => field.field === key);
+      if (field?.type === "number") {
+        formObject[key] = Number(value);
+      } else {
+        formObject[key] = value;
+      }
     });
-
-    setData((prevData: any) => {
-      const newData = [...prevData];
-      newData[count] = formObject;
-      return newData;
-    });
-    console.log(data);
-
-    setPage((prev) => prev + 1);
+    return formObject;
   };
-  const decrementCount = (event: React.MouseEvent<HTMLButtonElement>) => {
+
+  const validatePage = (formObject: { [key: string]: any }) => {
+    switch (count) {
+      case 1:
+        return page1.safeParse(formObject);
+      case 2:
+        return page2.safeParse(formObject);
+      case 3:
+        return page3.safeParse(formObject);
+      case 4:
+        return page4.safeParse(formObject);
+      case 5:
+        return page5.safeParse(formObject);
+      default:
+        return { success: true, error: null };
+    }
+  };
+
+  const nextPage = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formObject = convertFormData(formData);
+
+    const validation = validatePage(formObject);
+    if (validation.success) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [count]: formObject,
+      }));
+      setPage((prev) => prev + 1);
+      setErrors({});
+    } else {
+      const validationErrors: { [key: string]: string } = {};
+      if (validation.error) {
+        validation.error.issues.forEach((issue) => {
+          validationErrors[issue.path[0] as string] = issue.message;
+        });
+        setErrors(validationErrors);
+      }
+    }
+  };
+
+  const backPage = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (count !== 1) {
       setPage((prev) => prev - 1);
     }
   };
+
   const submitForm = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const formObject: { [key: string]: any } = {};
-    formData.forEach((value, key) => {
-      formObject[key] = value;
-    });
+    const formObject = convertFormData(formData);
 
-    setData((prevData: any) => {
-      const newData = [...prevData];
-      newData[count] = formObject;
-      return newData;
-    });
-
-    console.log(data);
-    // Add form submission logic here
-  };
-  const inputConstructer = (field: FormField) => {
-    switch (field.type) {
-      case "title":
-        let title;
-        title =
-          typeof field.field === "string"
-            ? field.field.replace(/_/g, " ")
-            : field.field;
-        return <h1 className="text-2xl uppercase text-inputGrey">{title}</h1>;
-
-      case "text":
-        let text;
-        text =
-          typeof field.field === "string"
-            ? field.field.replace(/_/g, " ")
-            : field.field;
-        return (
-          <div className="flex flex-col items-start">
-            <label
-              className="text-2xl uppercase text-inputGrey"
-              htmlFor={field.field}
-            >
-              {text}
-            </label>
-            <input type="text" name={field.field} id={field.field} />
-          </div>
-        );
-      case "email":
-        return (
-          <div className="flex flex-col items-start">
-            <label
-              className="text-2xl uppercase text-inputGrey"
-              htmlFor={field.field}
-            >
-              {field.field}
-            </label>
-            <input type="email" name={field.field} id={field.field} />
-          </div>
-        );
-      case "number":
-        let number;
-        number =
-          typeof field.field === "string"
-            ? field.field.replace(/_/g, " ")
-            : field.field;
-        return (
-          <div className="flex flex-col items-start">
-            <label
-              className="text-2xl uppercase text-inputGrey"
-              htmlFor={field.field}
-            >
-              {number}
-            </label>
-            <input type="number" name={field.field} id={field.field} />
-          </div>
-        );
-      case "select":
-        let placeholder, selectLabel;
-        selectLabel =
-          typeof field.field === "string"
-            ? field.field.replace(/_/g, " ")
-            : field.field;
-        return (
-          <div className="flex flex-col items-start">
-            <label
-              className="text-2xl uppercase text-inputGrey"
-              htmlFor={field.field}
-            >
-              {selectLabel}
-            </label>
-            <select name={field.field} id={field.field}>
-              {field.options?.map((option, index) => {
-                if (typeof option === "string") {
-                  placeholder =
-                    typeof option === "string"
-                      ? option.replace(/_/g, " ")
-                      : option;
-                  return (
-                    <option key={index} className="" value={option}>
-                      {placeholder}
-                    </option>
-                  );
-                } else if (typeof option === "number" && option !== null) {
-                  return (
-                    <option key={index} value={option}>
-                      {option}
-                    </option>
-                  );
-                }
-              })}
-            </select>
-          </div>
-        );
-      case "file":
-        let file;
-        file =
-          typeof field.field === "string"
-            ? field.field.replace(/_/g, " ")
-            : field.field;
-        return (
-          <div className="flex flex-col items-start">
-            <label
-              className="text-2xl uppercase text-inputGrey"
-              htmlFor={field.field}
-            >
-              {file}
-            </label>
-            <input
-              type="file"
-              className="border-none rounded-none"
-              name={field.field}
-              id={field.field}
-            />
-          </div>
-        );
-      case "camera":
-        return (
-          <>
-            <label>{field.field}</label>
-            <h1>camera</h1>
-          </>
-        );
-      default:
-        break;
+    const validation = validatePage(formObject);
+    if (validation.success) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [count]: formObject,
+      }));
+      console.log(formData); // This logs all form data
+      setErrors({});
+    } else {
+      const validationErrors: { [key: string]: string } = {};
+      if (validation.error) {
+        validation.error.issues.forEach((issue) => {
+          validationErrors[issue.path[0] as string] = issue.message;
+        });
+        setErrors(validationErrors);
+      }
     }
+  };
+
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [count]: {
+        ...prevFormData[count],
+        [name]: value,
+      },
+    }));
+  };
+
+  const inputConstructor = (field: FormField) => {
+    const error = errors[field.field];
+    const value = formData[count]?.[field.field] || "";
+
+    return (
+      <div key={field.field} className="flex flex-col items-start">
+        {field.type === "title" ? (
+          <h1 className="text-2xl uppercase text-inputGrey">
+            {field.field.replace(/_/g, " ")}
+          </h1>
+        ) : (
+          <>
+            <label
+              className="text-xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {field.field.replace(/_/g, " ")}
+            </label>
+            {field.type === "file" ? (
+              <input
+                type="file"
+                name={field.field}
+                id={field.field}
+                className="border-none rounded-none"
+              />
+            ) : (
+              <input
+                type={field.type}
+                name={field.field}
+                id={field.field}
+                value={value}
+                onChange={handleInputChange}
+                className={error ? "border-red-500" : ""}
+              />
+            )}
+            {error && <p className="text-red-500">{error}</p>}
+          </>
+        )}
+      </div>
+    );
   };
 
   return (
     <form
-      onSubmit={!page.is_last ? updateCount : submitForm}
-      className="flex flex-col items-center space-y-3"
+      onSubmit={!page.is_last ? nextPage : submitForm}
+      className="flex flex-col items-center space-y-5 h-full"
     >
-      <h1 className="md:text-[40px] font-jost text-inputGrey">{page.title}</h1>
+      <h1 className="text-3xl font-jost text-inputGrey">{page.title}</h1>
       <div className="flex flex-col">
-        {page.fields.map((field) => inputConstructer(field))}
+        {page.fields.map((field) => inputConstructor(field))}
       </div>
       <div className="flex space-x-10">
-        {!(count == 1) && (
-          <button
-            className="flex items-center space-x-1"
-            onClick={decrementCount}
-          >
+        {count !== 1 && (
+          <button className="flex items-center space-x-1" onClick={backPage}>
             <Image
               src={"/assets/right-arrow.png"}
               alt=""
