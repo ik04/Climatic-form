@@ -7,9 +7,9 @@ export const page1 = z.object({
     .nonempty("Name is required")
     .refine((value) => value.trim() !== "", "Name is required"),
   phone: z
-    .number()
-    .positive("Phone number is required")
-    .refine((value) => value !== 0, "Phone number is required"),
+    .string()
+    .nonempty("Phone number is required")
+    .refine((value) => value.trim() !== "", "Phone number is required"),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
   address: z
     .string()
@@ -60,19 +60,19 @@ export const page2 = z.object({
 export const page3 = z.object({
   pancard_copy: z
     .any()
-    .refine((file) => file !== null, "Pancard copy is required"),
+    .refine((file) => file.name.length > 0, "Pancard copy is required"),
   adhaar_copy: z
     .any()
-    .refine((file) => file !== null, "Adhaar copy is required"),
+    .refine((file) => file.name.length > 0, "Adhaar copy is required"),
   bank_statement: z
     .any()
-    .refine((file) => file !== null, "Bank statement is required"),
+    .refine((file) => file.name.length > 0, "Bank statement is required"),
   title_document: z
     .any()
-    .refine((file) => file !== null, "Title document is required"),
+    .refine((file) => file.name.length > 0, "Title document is required"),
   upload_selfie: z
     .any()
-    .refine((file) => file !== null, "Selfie upload is required"),
+    .refine((file) => file.name.length > 0, "Selfie upload is required"),
 });
 
 // Schema for Page 4: Reference Details (Reference 1)

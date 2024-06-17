@@ -8,7 +8,7 @@ export const Forms: FormsType = {
       },
       {
         field: "phone",
-        type: "number",
+        type: "text",
       },
       {
         field: "email",

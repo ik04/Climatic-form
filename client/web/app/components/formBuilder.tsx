@@ -58,6 +58,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formObject = convertFormData(formData);
+    console.log(formObject);
 
     const validation = validatePage(formObject);
     if (validation.success) {
@@ -165,7 +166,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               name={field.field}
               id={field.field}
               className="border-none rounded-none"
-              capture
+              capture="user"
             />
             {error && <p className="text-red-500">{error}</p>}
           </div>
