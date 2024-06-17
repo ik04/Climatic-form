@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { FormEvent, useState } from "react";
 import Image from "next/image";
 
 export const FormBuilder: React.FC<FormBuilderProps> = ({
@@ -7,15 +7,47 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
   setPage,
   count,
 }) => {
-  const updateCount = () => {
+  const [data, setData] = useState<any>([]);
+  const updateCount = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formObject: { [key: string]: any } = {};
+    formData.forEach((value, key) => {
+      formObject[key] = value;
+    });
+
+    setData((prevData: any) => {
+      const newData = [...prevData];
+      newData[count] = formObject;
+      return newData;
+    });
+    console.log(data);
+
     setPage((prev) => prev + 1);
   };
-  const decrementCount = () => {
-    if (count != 1) {
+  const decrementCount = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (count !== 1) {
       setPage((prev) => prev - 1);
     }
   };
+  const submitForm = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const formObject: { [key: string]: any } = {};
+    formData.forEach((value, key) => {
+      formObject[key] = value;
+    });
 
+    setData((prevData: any) => {
+      const newData = [...prevData];
+      newData[count] = formObject;
+      return newData;
+    });
+
+    console.log(data);
+    // Add form submission logic here
+  };
   const inputConstructer = (field: FormField) => {
     switch (field.type) {
       case "title":
@@ -144,48 +176,56 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-around h-full">
+    <form
+      onSubmit={!page.is_last ? updateCount : submitForm}
+      className="flex flex-col items-center space-y-3"
+    >
       <h1 className="md:text-[40px] font-jost text-inputGrey">{page.title}</h1>
-      {page.fields.map((field) => inputConstructer(field))}
+      <div className="flex flex-col">
+        {page.fields.map((field) => inputConstructer(field))}
+      </div>
       <div className="flex space-x-10">
         {!(count == 1) && (
           <button
-            className="flex items-center space-x-2"
-            onClick={() => decrementCount()}
+            className="flex items-center space-x-1"
+            onClick={decrementCount}
           >
             <Image
               src={"/assets/right-arrow.png"}
               alt=""
               className="-scale-x-100"
-              width={80}
-              height={80}
+              width={40}
+              height={40}
             />
-            <p className="uppercase text-[40px] font-jost text-accentGreen">
+            <p className="uppercase text-3xl font-jost text-accentGreen">
               Back
             </p>
           </button>
         )}
         {!page.is_last ? (
           <button
-            onClick={() => updateCount()}
-            className="flex items-center justify-center space-x-3"
+            type="submit"
+            className="flex items-center justify-center space-x-1"
           >
-            <p className="uppercase text-[40px] font-jost text-accentGreen">
+            <p className="uppercase text-3xl font-jost text-accentGreen">
               Next
             </p>
             <Image
               src={"/assets/right-arrow.png"}
               alt=""
-              width={80}
-              height={80}
+              width={40}
+              height={40}
             />
           </button>
         ) : (
-          <button className="uppercase text-[40px] font-jost text-black bg-accentGreen p-2">
+          <button
+            type="submit"
+            className="uppercase text-3xl font-jost text-black bg-accentGreen p-2"
+          >
             Submit
           </button>
         )}
       </div>
-    </div>
+    </form>
   );
 };
