@@ -126,42 +126,96 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     const error = errors[field.field];
     const value = formData[count]?.[field.field] || "";
 
-    return (
-      <div key={field.field} className="flex flex-col items-start">
-        {field.type === "title" ? (
-          <h1 className="text-2xl uppercase text-inputGrey">
+    switch (field.type) {
+      case "title":
+        return (
+          <h1 key={field.field} className="text-2xl uppercase text-inputGrey">
             {field.field.replace(/_/g, " ")}
           </h1>
-        ) : (
-          <>
+        );
+      case "file":
+        return (
+          <div key={field.field} className="flex flex-col items-start">
             <label
               className="text-xl uppercase text-inputGrey"
               htmlFor={field.field}
             >
               {field.field.replace(/_/g, " ")}
             </label>
-            {field.type === "file" ? (
-              <input
-                type="file"
-                name={field.field}
-                id={field.field}
-                className="border-none rounded-none"
-              />
-            ) : (
-              <input
-                type={field.type}
-                name={field.field}
-                id={field.field}
-                value={value}
-                onChange={handleInputChange}
-                className={error ? "border-red-500" : ""}
-              />
-            )}
+            <input
+              type="file"
+              name={field.field}
+              id={field.field}
+              className="border-none rounded-none"
+            />
             {error && <p className="text-red-500">{error}</p>}
-          </>
-        )}
-      </div>
-    );
+          </div>
+        );
+      case "camera":
+        return (
+          <div key={field.field} className="flex flex-col items-start">
+            <label
+              className="text-xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {field.field.replace(/_/g, " ")}
+            </label>
+            <input
+              type="file"
+              name={field.field}
+              id={field.field}
+              className="border-none rounded-none"
+              capture
+            />
+            {error && <p className="text-red-500">{error}</p>}
+          </div>
+        );
+      case "select":
+        return (
+          <div key={field.field} className="flex flex-col items-start">
+            <label
+              className="text-xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {field.field.replace(/_/g, " ")}
+            </label>
+            <select
+              name={field.field}
+              id={field.field}
+              value={value}
+              onChange={handleInputChange}
+              className={error ? "border-red-500" : ""}
+            >
+              {field.options?.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            {error && <p className="text-red-500">{error}</p>}
+          </div>
+        );
+      default:
+        return (
+          <div key={field.field} className="flex flex-col items-start">
+            <label
+              className="text-xl uppercase text-inputGrey"
+              htmlFor={field.field}
+            >
+              {field.field.replace(/_/g, " ")}
+            </label>
+            <input
+              type={field.type}
+              name={field.field}
+              id={field.field}
+              value={value}
+              onChange={handleInputChange}
+              className={error ? "border-red-500" : ""}
+            />
+            {error && <p className="text-red-500">{error}</p>}
+          </div>
+        );
+    }
   };
 
   return (
