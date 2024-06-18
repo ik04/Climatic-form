@@ -77,7 +77,6 @@ export const page3 = z.object({
 
 // Schema for Page 4: Reference Details (Reference 1)
 export const page4 = z.object({
-  reference_1: z.string(),
   name: z
     .string()
     .nonempty("Name is required")
@@ -98,7 +97,6 @@ export const page4 = z.object({
 
 // Schema for Page 5: Reference Details (Reference 2)
 export const page5 = z.object({
-  reference_2: z.string(),
   name: z
     .string()
     .nonempty("Name is required")

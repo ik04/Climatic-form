@@ -67,6 +67,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
         [count]: formObject,
       }));
       setPage((prev) => prev + 1);
+
       setErrors({});
     } else {
       const validationErrors: { [key: string]: string } = {};
