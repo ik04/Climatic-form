@@ -2,7 +2,9 @@
 namespace App\Services;
 
 use App\Models\Applicant;
+use App\Models\Document;
 use App\Models\Project;
+use App\Models\Reference;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -62,6 +64,7 @@ public function handlePage1($page1){
     return $applicant;
 }
 public function handlePage2($page2, $applicantId){
+    // print_r($page2);
     $project = Project::create([
         "type" => $page2["project_type"],
         "capacity" => $page2["project_capacity"],
@@ -76,19 +79,51 @@ public function handlePage2($page2, $applicantId){
     return $project;
 }
 
- function handleFile($file,$name,$path){
-    $file = $file->file($name);
-    $file_name =  time().'.'.$file->getClientOriginalExtension();
-    Storage::disk($path)->put($file_name,file_get_contents($file));
-    $url = Storage::url($file_name);
-    return $url;
+public function handlePage3($page3, $applicantId) {
+    $pancard_copy_url = $this->handleFile($page3['pancard_copy'], 'public/pancards');
+    $adhaar_copy_url = $this->handleFile($page3['adhaar_copy'], 'public/adhaars');
+    $bank_statement_url = $this->handleFile($page3['bank_statement'], 'public/bank_statements');
+    $title_document_url = $this->handleFile($page3['title_document'], 'public/title_documents');
+    $upload_selfie_url = $this->handleFile($page3['upload_selfie'], 'public/selfies');
+
+    $document = Document::create([
+        'pancard_copy' => $pancard_copy_url,
+        'adhaar_copy' => $adhaar_copy_url,
+        'bank_statement' => $bank_statement_url,
+        'title_document' => $title_document_url,
+        'selfie' => $upload_selfie_url,
+        'applicant_id' => $applicantId,
+    ]);
+
+    return $document;
 }
 
-public function handlePage3($page3, $applicantId) {
-    $pancard_copy_url =$this->handleFile($page3["pancard_copy"],"pancard_copy","public/pancards");
-    $adhaar_copy_url = $this->handleFile($page3["adhaar_copy"],"adhaar_copy","public/adhaars");
-    $bank_statement_url = $this->handleFile($page3["bank_statement"],"bank_statement","public/bank_statements");
-    $title_document_url = $this->handleFile($page3["title_document"],"title_document","public/title_documents");
-    $upload_selfie_url = $this->handleFile($page3["upload_selfie"],"upload_selfie","public/selfies");
+private function handleFile($file, $directory) {
+    if ($file instanceof \Illuminate\Http\UploadedFile) {
+        $path = $file->store($directory);
+        return Storage::url($path);
+    }
+    return null;
+}
+
+public function handlePage4($page4, $applicantId){
+    $reference1 = Reference::create([
+        "name" => $page4["name"],
+        "phone" => $page4["phone"],
+        "address" => $page4["address"],
+        "pincode" => $page4["pincode"],
+        "applicant_id" => $applicantId
+    ]);
+    return $reference1;
+}
+public function handlePage5($page5, $applicantId){
+    $reference2 = Reference::create([
+        "name" => $page5["name"],
+        "phone" => $page5["phone"],
+        "address" => $page5["address"],
+        "pincode" => $page5["pincode"],
+        "applicant_id" => $applicantId
+    ]);
+    return $reference2;
 }
 }

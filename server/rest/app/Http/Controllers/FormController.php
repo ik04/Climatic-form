@@ -19,7 +19,8 @@ class FormController extends Controller
         $applicant = $this->service->handlePage1($pageData[1]);
         $project = $this->service->handlePage2($pageData[2],$applicant->id);
         $document = $this->service->handlePage3($pageData[3],$applicant->id);
-
+        $reference1 = $this->service->handlePage4($pageData[4],$applicant->id);
+        $reference2 = $this->service->handlePage4($pageData[5],$applicant->id);
         return response()->json(["message" => "Form Submitted!","data" => $validated]);
     }
 }

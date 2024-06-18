@@ -14,7 +14,9 @@ class Project extends Model
         "site_address",
         "value",
         "tenure",
+        "loan_amount",
         "site_title",
-        "title_document_option"
+        "title_document_option",
+        "applicant_id"
     ];
 }

@@ -43,7 +43,7 @@ export const Forms: FormsType = {
       },
       {
         field: "project_capacity",
-        type: "text",
+        type: "number",
       },
       {
         field: "project_site_address",

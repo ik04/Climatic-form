@@ -33,9 +33,9 @@ export const page1 = z.object({
 export const page2 = z.object({
   project_type: z.enum(["Residential", "C&I"]),
   project_capacity: z
-    .string()
-    .nonempty("Project capacity is required")
-    .refine((value) => value.trim() !== "", "Project capacity is required"),
+    .number()
+    .positive("Project Capacity is required")
+    .refine((value) => value !== 0, "Project Capacity is required"),
   project_site_address: z
     .string()
     .nonempty("Project site address is required")

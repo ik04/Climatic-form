@@ -23,7 +23,7 @@ class SubmitFormDataRequest extends FormRequest
             '1_adhaar_number' => ['required', 'numeric', 'min:1'],
 
             '2_project_type' => ['required', 'string', 'in:Residential,C&I'],
-            '2_project_capacity' => ['required', 'string', 'min:1'],
+            '2_project_capacity' => ['required', 'numeric', 'min:1'],
             '2_project_site_address' => ['required', 'string', 'min:1'],
             '2_project_value' => ['required', 'numeric', 'min:1'],
             '2_loan_amount' => ['required', 'numeric', 'min:1'],
