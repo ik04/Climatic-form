@@ -98,7 +98,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
         ...prevFormData,
         [count]: formObject,
       }));
-      console.log(formData); // This logs all form data
+      console.log(formData);
       setErrors({});
     } else {
       const validationErrors: { [key: string]: string } = {};
@@ -230,7 +230,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
         {page.fields.map((field) => inputConstructor(field))}
       </div>
       <div className="flex space-x-10">
-        {count !== 1 && (
+        {/* {count !== 1 && (
           <button className="flex items-center space-x-1" onClick={backPage}>
             <Image
               src={"/assets/right-arrow.png"}
@@ -243,7 +243,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               Back
             </p>
           </button>
-        )}
+        )} */}
         {!page.is_last ? (
           <button
             type="submit"
