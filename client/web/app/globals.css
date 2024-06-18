@@ -6,14 +6,15 @@
 
 input {
   border: 1px #cccccc solid;
-  border-radius: 10px;
   -webkit-appearance: none;
   -moz-appearance: textfield;
+  width: 100%;
 }
 select {
   background-color: white;
   border: 1px #cccccc solid;
   padding: 10px;
+  width: 100%;
 }
 label {
   font-family: Roboto, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
