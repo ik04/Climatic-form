@@ -89,8 +89,8 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
 
   const submitForm = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formObject = convertFormData(formData);
+    const inputFormData = new FormData(event.currentTarget);
+    const formObject = convertFormData(inputFormData);
 
     const validation = validatePage(formObject);
     if (validation.success) {
