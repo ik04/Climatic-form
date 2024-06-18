@@ -1,6 +1,7 @@
 import React, { FormEvent, useState, useEffect, ChangeEvent } from "react";
 import Image from "next/image";
 import { page1, page2, page3, page4, page5 } from "../validation/Pages";
+import axios from "axios";
 
 interface FormDataState {
   [key: number]: { [key: string]: any };
@@ -87,7 +88,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     }
   };
 
-  const submitForm = (event: FormEvent<HTMLFormElement>) => {
+  const submitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const inputFormData = new FormData(event.currentTarget);
     const formObject = convertFormData(inputFormData);
@@ -100,6 +101,11 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
       }));
       console.log(formData);
       setErrors({});
+      const resp = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/test`,
+        formData
+      );
+      console.log(resp);
     } else {
       const validationErrors: { [key: string]: string } = {};
       if (validation.error) {
