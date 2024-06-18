@@ -3,24 +3,6 @@ import Image from "next/image";
 import { page1, page2, page3, page4, page5 } from "../validation/Pages";
 import axios from "axios";
 
-interface FormField {
-  field: string;
-  type: string;
-  options?: string[];
-}
-
-interface FormPage {
-  title: string;
-  fields: FormField[];
-  is_last: boolean;
-}
-
-interface FormBuilderProps {
-  page: FormPage;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-  count: number;
-}
-
 interface FormDataState {
   [key: number]: { [key: string]: string | File };
 }
