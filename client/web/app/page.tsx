@@ -8,7 +8,7 @@ const page = () => {
   const [page, setPage] = useState(1);
 
   return (
-    <div className="h-screen">
+    <div className="h-screen overflow-hidden">
       <div className="title flex items-center justify-center my-8">
         <Image alt="" src={"/assets/logo.png"} width={300} height={300} />
       </div>

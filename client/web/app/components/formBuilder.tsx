@@ -2,6 +2,8 @@ import React, { FormEvent, useState, useEffect, ChangeEvent } from "react";
 import Image from "next/image";
 import { page1, page2, page3, page4, page5 } from "../validation/Pages";
 import axios from "axios";
+import { ClockLoader, HashLoader, SquareLoader } from "react-spinners";
+import { RedirectType, redirect } from "next/navigation";
 
 interface FormDataState {
   [key: number]: { [key: string]: string | File };
@@ -14,6 +16,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
 }) => {
   const [formData, setFormData] = useState<FormDataState>({});
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     // Initialize formData for the current page if not already initialized
@@ -103,6 +106,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
 
   const submitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     const form = event.currentTarget;
     const formDataObject = new FormData(form);
 
@@ -128,8 +132,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
             },
           }
         );
-        console.log(resp);
-        // Handle success response as needed
+        redirect("/success");
       } catch (error) {
         console.error("Error submitting form:", error);
         // Handle error
@@ -280,7 +283,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
       </div>
       <div className="flex space-x-10">
         {/* Back button */}
-        {!page.is_last && count !== 1 && (
+        {/* {!page.is_last && count !== 1 && (
           <button
             className="flex items-center space-x-1"
             onClick={backPage}
@@ -297,7 +300,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               Back
             </p>
           </button>
-        )}
+        )} */}
         {/* Next/Submit button */}
         {!page.is_last ? (
           <button
@@ -315,12 +318,25 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
             />
           </button>
         ) : (
-          <button
-            type="submit"
-            className="uppercase text-3xl font-jost text-black bg-accentGreen p-2"
-          >
-            Submit
-          </button>
+          <>
+            {!isLoading ? (
+              <button
+                type="submit"
+                className="uppercase text-3xl font-jost text-black bg-accentGreen p-2"
+              >
+                Submit
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="uppercase text-3xl font-jost text-black bg-accentGreen p-2 flex items-center space-x-2 mr-3"
+                disabled
+              >
+                <p>Submit</p>
+                <HashLoader color="black" size={30} />
+              </button>
+            )}
+          </>
         )}
       </div>
     </form>

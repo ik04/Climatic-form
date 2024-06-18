@@ -57,22 +57,52 @@ export const page2 = z.object({
 });
 
 // Schema for Page 3: Documents Upload
+
+const allowedImageTypes = ["image/jpeg", "image/png", "image/gif"];
+const allowedDocumentTypes = ["application/pdf", ...allowedImageTypes];
+
 export const page3 = z.object({
   pancard_copy: z
     .any()
-    .refine((file) => file.name.length > 0, "Pancard copy is required"),
+    .refine((file) => file && file.name.length > 0, "Pancard copy is required")
+    .refine(
+      (file) => allowedDocumentTypes.includes(file.type),
+      "Pancard copy must be a PDF or image"
+    ),
   adhaar_copy: z
     .any()
-    .refine((file) => file.name.length > 0, "Adhaar copy is required"),
+    .refine((file) => file && file.name.length > 0, "Adhaar copy is required")
+    .refine(
+      (file) => allowedDocumentTypes.includes(file.type),
+      "Adhaar copy must be a PDF or image"
+    ),
   bank_statement: z
     .any()
-    .refine((file) => file.name.length > 0, "Bank statement is required"),
+    .refine(
+      (file) => file && file.name.length > 0,
+      "Bank statement is required"
+    )
+    .refine(
+      (file) => allowedDocumentTypes.includes(file.type),
+      "Bank statement must be a PDF or image"
+    ),
   title_document: z
     .any()
-    .refine((file) => file.name.length > 0, "Title document is required"),
+    .refine(
+      (file) => file && file.name.length > 0,
+      "Title document is required"
+    )
+    .refine(
+      (file) => allowedDocumentTypes.includes(file.type),
+      "Title document must be a PDF or image"
+    ),
   upload_selfie: z
     .any()
-    .refine((file) => file.name.length > 0, "Selfie upload is required"),
+    .refine((file) => file && file.name.length > 0, "Selfie upload is required")
+    .refine(
+      (file) => allowedImageTypes.includes(file.type),
+      "Selfie must be an image (JPEG, PNG, GIF)"
+    ),
 });
 
 // Schema for Page 4: Reference Details (Reference 1)
