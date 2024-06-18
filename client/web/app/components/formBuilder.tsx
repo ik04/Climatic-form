@@ -3,8 +3,26 @@ import Image from "next/image";
 import { page1, page2, page3, page4, page5 } from "../validation/Pages";
 import axios from "axios";
 
+interface FormField {
+  field: string;
+  type: string;
+  options?: string[];
+}
+
+interface FormPage {
+  title: string;
+  fields: FormField[];
+  is_last: boolean;
+}
+
+interface FormBuilderProps {
+  page: FormPage;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  count: number;
+}
+
 interface FormDataState {
-  [key: number]: { [key: string]: any };
+  [key: number]: { [key: string]: string | File };
 }
 
 export const FormBuilder: React.FC<FormBuilderProps> = ({
@@ -25,19 +43,6 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     }
   }, [count, formData]);
 
-  const convertFormData = (formData: FormData) => {
-    const formObject: { [key: string]: any } = {};
-    formData.forEach((value, key) => {
-      const field = page.fields.find((field) => field.field === key);
-      if (field?.type === "number") {
-        formObject[key] = Number(value);
-      } else {
-        formObject[key] = value;
-      }
-    });
-    return formObject;
-  };
-
   const validatePage = (formObject: { [key: string]: any }) => {
     switch (count) {
       case 1:
@@ -55,12 +60,28 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     }
   };
 
+  const convertFormData = (formData: FormData) => {
+    const formObject: { [key: string]: any } = {};
+    formData.forEach((value, key) => {
+      const field = page.fields.find((field) => field.field === key);
+      if (field?.type === "number") {
+        formObject[key] = Number(value);
+      } else if (field?.type === "file") {
+        formObject[key] = value instanceof FileList ? value[0] : value; // Store the first file if multiple files are selected
+      } else {
+        formObject[key] = value;
+      }
+    });
+    return formObject;
+  };
+
   const nextPage = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formObject = convertFormData(formData);
-    console.log(formObject);
+    const form = event.currentTarget;
+    const formDataObject = new FormData(form);
 
+    // Convert FormData object to plain JS object
+    const formObject: { [key: string]: any } = convertFormData(formDataObject);
     const validation = validatePage(formObject);
     if (validation.success) {
       setFormData((prevFormData) => ({
@@ -68,7 +89,6 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
         [count]: formObject,
       }));
       setPage((prev) => prev + 1);
-
       setErrors({});
     } else {
       const validationErrors: { [key: string]: string } = {};
@@ -88,10 +108,23 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     }
   };
 
+  const convertNestedFormDataToFormData = (nestedFormData: FormDataState) => {
+    const formData = new FormData();
+    Object.keys(nestedFormData).forEach((pageKey) => {
+      const pageData = nestedFormData[Number(pageKey)];
+      Object.keys(pageData).forEach((key) => {
+        formData.append(`${pageKey}_${key}`, pageData[key]);
+      });
+    });
+    return formData;
+  };
+
   const submitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const inputFormData = new FormData(event.currentTarget);
-    const formObject = convertFormData(inputFormData);
+    const form = event.currentTarget;
+    const formDataObject = new FormData(form);
+
+    const formObject: { [key: string]: any } = convertFormData(formDataObject);
 
     const validation = validatePage(formObject);
     if (validation.success) {
@@ -99,13 +132,26 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
         ...prevFormData,
         [count]: formObject,
       }));
-      console.log(formData);
       setErrors({});
-      const resp = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/test`,
-        formData
-      );
-      console.log(resp);
+
+      try {
+        const finalFormData = convertNestedFormDataToFormData(formData);
+        console.log(finalFormData);
+        const resp = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/submit`,
+          finalFormData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log(resp);
+        // Handle success response as needed
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        // Handle error
+      }
     } else {
       const validationErrors: { [key: string]: string } = {};
       if (validation.error) {
@@ -120,16 +166,28 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = event.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [count]: {
-        ...prevFormData[count],
-        [name]: value,
-      },
-    }));
-  };
+    const { name, value, files } = event.target as HTMLInputElement; // Explicitly cast event.target to HTMLInputElement
 
+    if (name) {
+      if (files) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [count]: {
+            ...prevFormData[count],
+            [name]: files[0], // Store the file object
+          },
+        }));
+      } else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [count]: {
+            ...prevFormData[count],
+            [name]: value,
+          },
+        }));
+      }
+    }
+  };
   const inputConstructor = (field: FormField) => {
     const error = errors[field.field];
     const value = formData[count]?.[field.field] || "";
@@ -155,6 +213,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               name={field.field}
               id={field.field}
               className="border-none rounded-none"
+              onChange={handleInputChange}
             />
             {error && <p className="text-red-500">{error}</p>}
           </div>
@@ -174,6 +233,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               id={field.field}
               className="border-none rounded-none"
               capture="user"
+              onChange={handleInputChange}
             />
             {error && <p className="text-red-500">{error}</p>}
           </div>
@@ -190,7 +250,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
             <select
               name={field.field}
               id={field.field}
-              value={value}
+              value={value as string}
               onChange={handleInputChange}
               className={error ? "border-red-500" : ""}
             >
@@ -216,7 +276,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               type={field.type}
               name={field.field}
               id={field.field}
-              value={value}
+              value={value as string}
               onChange={handleInputChange}
               className={error ? "border-red-500" : ""}
             />
@@ -230,14 +290,20 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     <form
       onSubmit={!page.is_last ? nextPage : submitForm}
       className="flex flex-col items-center space-y-5 h-full"
+      encType="multipart/form-data"
     >
       <h1 className="text-3xl font-jost text-inputGrey">{page.title}</h1>
       <div className="flex flex-col">
         {page.fields.map((field) => inputConstructor(field))}
       </div>
       <div className="flex space-x-10">
-        {/* {count !== 1 && (
-          <button className="flex items-center space-x-1" onClick={backPage}>
+        {/* Back button */}
+        {!page.is_last && count !== 1 && (
+          <button
+            className="flex items-center space-x-1"
+            onClick={backPage}
+            type="button"
+          >
             <Image
               src={"/assets/right-arrow.png"}
               alt=""
@@ -249,7 +315,8 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               Back
             </p>
           </button>
-        )} */}
+        )}
+        {/* Next/Submit button */}
         {!page.is_last ? (
           <button
             type="submit"

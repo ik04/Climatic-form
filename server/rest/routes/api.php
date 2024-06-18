@@ -10,4 +10,4 @@ Route::get("/healthcheck",function(){
 Route::post("/test",function(Request $request){
     return response()->json(["test" => $request->all()],200);
 });
-Route::post("/upload",[FormController::class,"upload"]);
+Route::post("/submit",[FormController::class,"submit"]);

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string("site_address");
             $table->bigInteger("value");
             $table->integer("tenure");
+            $table->integer("loan_amount");
             $table->string("site_title");
             $table->string("title_document_option");
             $table->unsignedBigInteger("applicant_id");
