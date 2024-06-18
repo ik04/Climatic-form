@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('applicants', function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->integer("phone");
+            $table->string("phone");
             $table->string("email");
             $table->string("address");
             $table->integer("pan_number");

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string("type");
-            $table->integer("capacity");
+            $table->bigInteger("capacity");
             $table->string("site_address");
-            $table->integer("value");
+            $table->bigInteger("value");
             $table->integer("tenure");
             $table->string("site_title");
             $table->string("title_document_option");

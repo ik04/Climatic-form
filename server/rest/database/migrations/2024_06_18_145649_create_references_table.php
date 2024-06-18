@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string("name");
             $table->string("phone");
             $table->string("address");
-            $table->integer("pincode");
+            $table->integer("pincode")->max(6);
             $table->unsignedBigInteger("applicant_id");
             $table->foreign("applicant_id")->references("id")->on("applicants")->onDelete("cascade");
             $table->timestamps();
